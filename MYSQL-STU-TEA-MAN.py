@@ -3,12 +3,12 @@ import tkinter as tk
 import tkinter.ttk as ttk
 import tkinter.messagebox
 
-# 进行对于数据库的链接，数据库地址为 127.0.0.1，用户名为 root ，密码为 laoli666 ，数据库名为 学生选课系统 ，端口号为 3307
+# 进行对于数据库的链接
 host = "127.0.0.1"
-user = "root"
-password = "laoli666"
-db = "学生选课系统"
-port = 3307
+user = #切换为个人的数据库名称
+password = #切换为个人的数据库密码
+db = #切换为个人的数据库名称
+port = #切换为个人的端口号
 conn = pymysql.connect(host=host, user=user, password=password, db=db, port=port, charset="utf8")
 cursor = conn.cursor()
 def add_course(course_number,number,course_name,student_name,a,b):#实现选课功能
