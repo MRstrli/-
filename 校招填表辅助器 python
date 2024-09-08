@@ -1,0 +1,114 @@
+校招重复填表 辅助器(CSDN Li_11976)
+
+校招重复填表太多，WORD复制又太麻烦
+
+采用Python和TK做了个小玩意，有缘人能用则用
+
+全部代码如下：
+
+安装TK库 pip install tkinter
+
+安装 pyperclip库 pip install pyperclip
+
+ 
+代码：
+import tkinter as tk
+from tkinter import messagebox
+import json
+import pyperclip  # 用于复制到剪贴板
+ 
+# JSON 文件路径
+DATA_FILE = "E:\简历\\form_data.json"#改为你自己的路径，会自动创建HSON文件
+ 
+# 读取已保存的数据
+def load_data():
+    try:
+        with open(DATA_FILE, "r") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
+ 
+# 保存表单数据
+def save_data(data):
+    with open(DATA_FILE, "w") as file:
+        json.dump(data, file)
+ 
+# 更新显示数据的列表框
+def update_listbox():
+    listbox.delete(0, tk.END)
+    for key in form_data.keys():
+        listbox.insert(tk.END, key)
+ 
+# 选择已保存的表单数据
+def on_select(event):
+    w = event.widget
+    if w.curselection():
+        index = int(w.curselection()[0])
+        key = w.get(index)
+        entry_name.delete(0, tk.END)
+        entry_name.insert(0, key)
+        entry_value.delete(0, tk.END)
+        entry_value.insert(0, form_data[key])
+ 
+# 保存当前输入的表单数据
+def save_form():
+    key = entry_name.get()
+    value = entry_value.get()
+    if key and value:
+        form_data[key] = value
+        save_data(form_data)
+        update_listbox()
+        messagebox.showinfo("Success", "已存储")
+    else:
+        messagebox.showwarning("Input Error", "请勿空值.")
+ 
+# 复制所选表单数据到剪贴板
+def copy_to_clipboard():
+    key = entry_name.get()
+    if key in form_data:
+        pyperclip.copy(form_data[key])
+        #messagebox.showinfo("复制了", "Data copied to clipboard!")
+    else:
+        messagebox.showwarning("Selection Error", "请勿空值.")
+ 
+# 初始化数据
+form_data = load_data()
+ 
+# 创建主窗口
+root = tk.Tk()
+root.title("填表1")
+root.attributes('-topmost', True)  # 设置窗口始终在最前面
+# 配置布局，使窗口自适应大小
+root.columnconfigure(0, weight=1)
+root.columnconfigure(1, weight=1)
+root.rowconfigure(3, weight=1)  # 使列表框所在行可扩展
+ 
+# 创建输入框和标签
+tk.Label(root, text="事件名:").grid(row=0, column=0, padx=10, pady=5, sticky="ew")
+entry_name = tk.Entry(root)
+entry_name.grid(row=0, column=1, padx=10, pady=5)
+ 
+tk.Label(root, text="事件内容:").grid(row=1, column=0, padx=10, pady=5.,sticky="ew")
+entry_value = tk.Entry(root)
+entry_value.grid(row=1, column=1, padx=10, pady=5)
+ 
+# 保存按钮
+btn_save = tk.Button(root, text="保存", command=save_form)
+btn_save.grid(row=2, column=0, columnspan=2, pady=10)
+ 
+# 显示已保存表单数据的列表框
+listbox = tk.Listbox(root)
+listbox.grid(row=3, column=0, columnspan=2, padx=10, pady=5, sticky="nsew")
+listbox.bind('<<ListboxSelect>>', on_select)
+ 
+# 复制按钮
+btn_copy = tk.Button(root, text="复制到剪切板", command=copy_to_clipboard)
+btn_copy.grid(row=4, column=0, columnspan=2, pady=10)
+ 
+# 初始化列表框
+update_listbox()
+ 
+# 运行主循环
+root.mainloop()
+ 
+#作者 李某 ，panzer_li@qq.com
